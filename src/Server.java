@@ -1,6 +1,7 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.stream.IntStream;
 
 public class Server implements IMath {
 
@@ -13,13 +14,14 @@ public class Server implements IMath {
             return new int[][]{};
 
         int[][] resultMatrix = new int[firstMatrix.length][secondMatrix[0].length];
-        for (int i = 0; i < firstMatrix.length; i++) {
-            for (int j = 0; j < secondMatrix[0].length; j++) {
+
+        IntStream.range(0, firstMatrix.length).parallel().forEach(i -> {
+            IntStream.range(0, secondMatrix[0].length).parallel().forEach(j -> {
                 for (int k = 0; k < secondMatrix.length; k++) {
                     resultMatrix[i][j] += firstMatrix[i][k] * secondMatrix[k][j];
                 }
-            }
-        }
+            });
+        });
 
         return resultMatrix;
     }
